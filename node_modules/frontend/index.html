@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Cloth Shop Assistant</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="theme-toggle" onclick="toggleTheme()">🌙</div>
+
+  <div class="chat-app glass">
+    <header>
+      <h2>🤖 AI Cloth Assistant</h2>
+      <span>Smart • Fast • Helpful</span>
+    </header>
+
+    <div class="chat-messages" id="chatMessages">
+      <div class="bot-message">
+        Hello 👋 How can I help you today?
+      </div>
+    </div>
+
+    <div class="typing-indicator" id="typingIndicator">
+      Bot is typing<span>.</span><span>.</span><span>.</span>
+    </div>
+
+    <div class="chat-input">
+      <textarea id="userInput" placeholder="Ask about clothes..." rows="1"></textarea>
+      <button onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
