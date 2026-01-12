@@ -1,24 +1,78 @@
-require("dotenv").config({ path: require("path").resolve(__dirname, ".env") });
-console.log("MONGO_URI present:", !!process.env.MONGO_URI);
+// Load environment variables
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
+
+// Import DB connection
 const connectDB = require("./config/db");
 
-const app = express();
-const PORT = process.env.PORT || 5000;
+// Import routes
+const chatRoutes = require("./routes/chat");
+const adminRoutes = require("./routes/admin");
 
-// Connect DB
+const app = express();
+
+/* =========================
+   DATABASE CONNECTION
+========================= */
 connectDB();
 
-app.use(cors());
+/* =========================
+   MIDDLEWARES
+========================= */
+
+// Enable CORS (allow frontend + admin UI)
+app.use(
+  cors({
+    origin: "*", // allow all (safe for demo)
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "x-admin-key"]
+  })
+);
+
+// Parse JSON body
 app.use(express.json());
 
-const adminRoute = require("./routes/admin");
-app.use("/admin", adminRoute);
+/* =========================
+   ROUTES
+========================= */
 
-const chatRoute = require("./routes/chat");
-app.use("/chat", chatRoute);
+// Health check
+app.get("/", (req, res) => {
+  res.json({
+    status: "OK",
+    message: "AI Cloth Chatbot Backend is Live 🚀"
+  });
+});
+
+// Chatbot API
+app.use("/chat", chatRoutes);
+
+// Admin API
+app.use("/admin", adminRoutes);
+
+/* =========================
+   ERROR HANDLING
+========================= */
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found ❌" });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error("Server Error:", err.message);
+  res.status(500).json({ message: "Internal server error ❌" });
+});
+
+/* =========================
+   SERVER START
+========================= */
+
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
