@@ -1,0 +1,81 @@
+// Get DOM elements
+const chatMessages = document.getElementById("chatMessages");
+const userInput = document.getElementById("userInput");
+const typingIndicator = document.getElementById("typingIndicator");
+
+// THEME TOGGLE
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+  localStorage.setItem("theme",
+    document.body.classList.contains("dark") ? "dark" : "light"
+  );
+}
+
+// Load saved theme
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark");
+}
+
+// Add a message to chat window
+function addMessage(text, sender) {
+  const messageDiv = document.createElement("div");
+  messageDiv.className = sender === "user" ? "user-message" : "bot-message";
+  messageDiv.innerText = text;
+
+  chatMessages.appendChild(messageDiv);
+
+  // Auto-scroll to bottom
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Send message to backend
+async function sendMessage() {
+  const message = userInput.value.trim();
+  if (!message) return;
+
+  // Show user message
+  addMessage(message, "user");
+
+  // Clear input
+  userInput.value = "";
+  userInput.style.height = "auto";
+
+  // Show typing indicator
+  typingIndicator.style.display = "block";
+
+  try {
+    const response = await fetch("https://ai-cloth-chatbot.onrender.com/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ message })
+    });
+
+    const data = await response.json();
+
+    // Simulate typing delay
+    setTimeout(() => {
+      typingIndicator.style.display = "none";
+      addMessage(data.reply, "bot");
+    }, 800);
+
+  } catch (error) {
+    typingIndicator.style.display = "none";
+    addMessage("Server not reachable 😔", "bot");
+  }
+}
+
+// Enter key support (Enter = send, Shift+Enter = new line)
+userInput.addEventListener("keydown", function (event) {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    sendMessage();
+  }
+});
+
+// Auto-grow textarea height
+userInput.addEventListener("input", function () {
+  this.style.height = "auto";
+  this.style.height = this.scrollHeight + "px";
+});

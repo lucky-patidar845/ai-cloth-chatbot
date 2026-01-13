@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+<div class="theme-toggle" onclick="toggleTheme()">🌙</div>
+
+<div class="admin glass">
+  <h2>🧑‍💼 Admin Dashboard</h2>
+
+  <input id="adminKey" type="password" placeholder="Admin Key" />
+  <input id="product" placeholder="Product name" />
+  <input id="category" placeholder="Category" />
+  <input id="material" placeholder="Material" />
+  <input id="price" type="number" placeholder="Price" />
+  <input id="colors" placeholder="Colors (comma separated)" />
+  <input id="sizes" placeholder="Sizes (comma separated)" />
+
+  <button onclick="addProduct()">Add Product</button>
+  <p id="responseMsg"></p>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>

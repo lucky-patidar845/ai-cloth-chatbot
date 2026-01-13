@@ -1,0 +1,63 @@
+/* ===============================
+   🌗 THEME TOGGLE (ADMIN) - GLOBAL
+   =============================== */
+// Only run theme code in a browser environment
+if (typeof window !== "undefined" && typeof document !== "undefined") {
+  function toggleTheme() {
+    document.body.classList.toggle("dark");
+    if (typeof window.localStorage !== "undefined") {
+      window.localStorage.setItem(
+        "theme",
+        document.body.classList.contains("dark") ? "dark" : "light"
+      );
+    }
+  }
+
+  // Load saved theme on page load
+  if (typeof window.localStorage !== "undefined" && window.localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+  }
+}
+
+/* ===============================
+   ➕ ADD PRODUCT FUNCTION
+   =============================== */
+async function addProduct() {
+  const adminKey = document.getElementById("adminKey").value;
+
+  const productData = {
+    category: document.getElementById("category").value.toLowerCase(),
+    product: document.getElementById("product").value.toLowerCase(),
+    material: document.getElementById("material").value.toLowerCase(),
+    price: Number(document.getElementById("price").value),
+    stock: document.getElementById("stock").checked,
+    colors: document
+      .getElementById("colors")
+      .value.split(",")
+      .map(c => c.trim()),
+    sizes: document
+      .getElementById("sizes")
+      .value.split(",")
+      .map(s => s.trim())
+  };
+
+  try {
+    const response = await fetch("https://ai-cloth-chatbot.onrender.com/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-key": adminKey
+      },
+      body: JSON.stringify(productData)
+    });
+
+    const data = await response.json();
+
+    document.getElementById("responseMsg").innerText =
+      data.message || "Something went wrong ❌";
+
+  } catch (error) {
+    document.getElementById("responseMsg").innerText =
+      "Server not reachable ❌";
+  }
+}
